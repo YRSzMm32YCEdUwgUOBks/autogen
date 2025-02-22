@@ -188,6 +188,9 @@ test/agentchat/test_agent_scripts/*
 .db
 local_cache
 
+# Ignore browser_data and screenshots directories
+python/samples/team_chat_human_in_loop/browser_data/
+python/samples/team_chat_human_in_loop/screenshots/
 
 notebook/result.png
 samples/apps/autogen-studio/autogenstudio/models/test/
