@@ -396,6 +396,7 @@ $functions"""
             )
             cancellation_token.link_future(task)
 
+            proc = None  # Track the process
             try:
                 proc = await task
                 stdout, stderr = await asyncio.wait_for(proc.communicate(), self._timeout)
@@ -403,10 +404,16 @@ $functions"""
             except asyncio.TimeoutError:
                 logs_all += "\nTimeout"
                 exitcode = 124
+                if proc:
+                    proc.terminate()
+                    await proc.wait()  # Ensure process is fully dead
                 break
             except asyncio.CancelledError:
                 logs_all += "\nCancelled"
                 exitcode = 125
+                if proc:
+                    proc.terminate()
+                    await proc.wait()
                 break
 
             logs_all += stderr.decode()
@@ -424,6 +431,16 @@ $functions"""
             "Restarting local command line code executor is not supported. No action is taken.",
             stacklevel=2,
         )
+
+    async def start(self) -> None:
+        """(Experimental) Start the code executor."""
+        # No action needed for local command line executor
+        pass
+
+    async def stop(self) -> None:
+        """(Experimental) Stop the code executor."""
+        # No action needed for local command line executor
+        pass
 
     def _to_config(self) -> LocalCommandLineCodeExecutorConfig:
         if self._functions:
